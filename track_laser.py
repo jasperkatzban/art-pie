@@ -131,9 +131,10 @@ while True:
     if MIDI_OUT:
         # create and send midi messages
         print(f'Sending midi: Note: {note}\tCC: {value}')
-        msg1 = mido.Message('note_on', note=note, velocity=100)
+        # msg1 = mido.Message('note_on', note=note, velocity=100)
         # msg1 = mido.Message('note_off', note=note, velocity=100)
-        msg2 = mido.Message('control_change', channel=MIDI_CC_CHAN, value=value)
+        msg1 = mido.Message('control_change', channel=14, value=note)
+        msg2 = mido.Message('control_change', channel=15, value=value)
         outport.send(msg1)
         outport.send(msg2)
 
