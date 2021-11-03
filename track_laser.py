@@ -2,9 +2,17 @@ import cv2
 import numpy as np
 import mido
 import sys
+import imutils
 
 # enables sliders to set threshold values
 DEBUG_THRESHOLD = False
+
+# circle drawing constants
+MAX_LOC_CIRCLE = True
+CENTER_CIRCLE = True
+
+# show frame or mask
+SHOW = "mask"
 
 # create video capture object
 cap = cv2.VideoCapture(0)
@@ -17,19 +25,21 @@ CAM_HEIGHT_PX = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 # set midi cc channel
 MIDI_CC_CHAN = 14
 
+# enable MIDI output
+MIDI_OUT = False
+
 # set target virtual midi device name
 target_output_name = 'IAC Driver Virtual Midi Cable'
 
-# get midi output names and set to target
-output_names = mido.get_output_names()
-if target_output_name in output_names:
-    outport = mido.open_output(target_output_name)
-else:
-    print(f'Error: Could not find {target_output_name} in the midi devices:')
-    print(output_names)
-    sys.exit(-1)
-
-
+if MIDI_OUT:
+    # get midi output names and set to target
+    output_names = mido.get_output_names()
+    if target_output_name in output_names:
+        outport = mido.open_output(target_output_name)
+    else:
+        print(f'Error: Could not find {target_output_name} in the midi devices:')
+        print(output_names)
+        sys.exit(-1)
 
 # These defaults work nicely with a macbook pro camera on a piece of white paper
 # These thresholds rely on the fact that the laser pointer is usually the brightest thing in the 
@@ -83,22 +93,49 @@ while True:
     (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(mask)
 
     # draw a circle around the estimated laser position
-    cv2.circle(frame, maxLoc, 20, (0, 0, 255), 2, cv2.LINE_AA)
+    if MAX_LOC_CIRCLE:
+        cv2.circle(frame, maxLoc, 20, (0, 0, 255), 2, cv2.LINE_AA)
+    
+    # (x, y) center of the circle
+    cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
+        cv2.CHAIN_APPROX_SIMPLE)
+    cnts = imutils.grab_contours(cnts)
+    center = None
+    # only proceed if at least one contour was found
+    if len(cnts) > 0:
+        # find the largest contour in the mask, then use
+        # it to compute the minimum enclosing circle and
+        # centroid
+        c = max(cnts, key=cv2.contourArea)
+        ((x, y), radius) = cv2.minEnclosingCircle(c)
+        M = cv2.moments(c)
+        center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+        # only proceed if the radius meets a minimum size
+        if radius > 6:
+            # draw the circle and centroid on the frame,
+            # then update the list of tracked points
+            cv2.circle(frame, (int(x), int(y)), int(radius),
+                (0, 255, 255), 2)
+            cv2.circle(frame, center, 5, (0, 0, 255), -1)
 
     # show the current frame
-    cv2.imshow(windowName, mask)
+    if SHOW == "frame":
+        cv2.imshow(windowName, frame)
+    if SHOW == "mask":
+        cv2.imshow(windowName, frame)
 
     # map laser point location to note values and a midi control change
     note = int((maxLoc[0] / CAM_WIDTH_PX) * 127)
     value = int((maxLoc[1] / CAM_HEIGHT_PX) * 127)
 
-    # create and send midi messages
-    print(f'Sending midi: Note: {note}\tCC: {value}')
-    msg1 = mido.Message('note_on', note=note, velocity=100)
-    # msg1 = mido.Message('note_off', note=note, velocity=100)
-    msg2 = mido.Message('control_change', channel=MIDI_CC_CHAN, value=value)
-    outport.send(msg1)
-    outport.send(msg2)
+    if MIDI_OUT:
+        # create and send midi messages
+        print(f'Sending midi: Note: {note}\tCC: {value}')
+        msg1 = mido.Message('note_on', note=note, velocity=100)
+        # msg1 = mido.Message('note_off', note=note, velocity=100)
+        msg2 = mido.Message('control_change', channel=MIDI_CC_CHAN, value=value)
+        outport.send(msg1)
+        outport.send(msg2)
 
     # quit by pressing CTRL/CMD + Q
     if cv2.waitKey(1) & 0xFF == ord('q'):
