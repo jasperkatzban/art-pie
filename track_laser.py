@@ -6,10 +6,14 @@ import sys
 # enables sliders to set threshold values
 DEBUG_THRESHOLD = False
 
-# define camera frame dimensions
+# create video capture object
+cap = cv2.VideoCapture(0)
+windowName = 'Laser Finder'
+
+# derive camera frame dimensions
 # TODO: derive these from camera object instead
-CAM_WIDTH_PX = 1280
-CAM_HEIGHT_PX = 720
+CAM_WIDTH_PX = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+CAM_HEIGHT_PX = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 
 # set midi cc channel
 MIDI_CC_CHAN = 14
@@ -26,9 +30,7 @@ else:
     print(output_names)
     sys.exit(-1)
 
-# create video capture object
-cap = cv2.VideoCapture(0)
-windowName = 'Laser Finder'
+
 
 # These defaults work nicely with a macbook pro camera on a piece of white paper
 # These thresholds rely on the fact that the laser pointer is usually the brightest thing in the 
