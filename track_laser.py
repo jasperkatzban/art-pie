@@ -26,7 +26,7 @@ CAM_HEIGHT_PX = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 MIDI_CC_CHAN = 14
 
 # enable MIDI output
-MIDI_OUT = False
+MIDI_OUT = True
 
 # set target virtual midi device name
 target_output_name = 'IAC Driver Virtual Midi Cable'
@@ -109,7 +109,8 @@ while True:
         c = max(cnts, key=cv2.contourArea)
         ((x, y), radius) = cv2.minEnclosingCircle(c)
         M = cv2.moments(c)
-        center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+        # center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+        center = (int(x), int(y))
         # only proceed if the radius meets a minimum size
         if radius > 6:
             # draw the circle and centroid on the frame,
@@ -133,8 +134,8 @@ while True:
         print(f'Sending midi: Note: {note}\tCC: {value}')
         # msg1 = mido.Message('note_on', note=note, velocity=100)
         # msg1 = mido.Message('note_off', note=note, velocity=100)
-        msg1 = mido.Message('control_change', channel=14, value=note)
-        msg2 = mido.Message('control_change', channel=15, value=value)
+        msg1 = mido.Message('control_change', channel=1, control=14, value=note)
+        msg2 = mido.Message('control_change', channel=1, control=15, value=value)
         outport.send(msg1)
         outport.send(msg2)
 
