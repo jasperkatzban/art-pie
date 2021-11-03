@@ -11,7 +11,6 @@ cap = cv2.VideoCapture(0)
 windowName = 'Laser Finder'
 
 # derive camera frame dimensions
-# TODO: derive these from camera object instead
 CAM_WIDTH_PX = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
 CAM_HEIGHT_PX = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 
@@ -57,6 +56,7 @@ while True:
     if DEBUG_THRESHOLD:
         # create sliders
         # TODO: cleanup this a bit
+
         cv2.createTrackbar('min_hue', windowName, 0, 255, trackbar_callback)
         cv2.createTrackbar('max_hue', windowName, 0, 255, trackbar_callback)
         cv2.createTrackbar('min_sat', windowName, 0, 255, trackbar_callback)
@@ -86,7 +86,7 @@ while True:
     cv2.circle(frame, maxLoc, 20, (0, 0, 255), 2, cv2.LINE_AA)
 
     # show the current frame
-    cv2.imshow(windowName, frame)
+    cv2.imshow(windowName, mask)
 
     # map laser point location to note values and a midi control change
     note = int((maxLoc[0] / CAM_WIDTH_PX) * 127)
