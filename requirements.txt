@@ -2,5 +2,5 @@ imutils==0.5.4
 mido==1.2.10
 pyo==1.0.4
 numpy==1.21.3
-opencv-python==4.5.4.58
+opencv-python==4.5.4.56
 python-rtmidi==1.4.9
