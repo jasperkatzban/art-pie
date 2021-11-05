@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import mido
+import mido, pyo
 import sys
 import imutils
 
@@ -25,13 +25,13 @@ CAM_HEIGHT_PX = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 # set midi cc channel
 MIDI_CC_CHAN = 14
 
-# enable MIDI output
-MIDI_OUT = True
+# select output: 'audio', 'midi'
+OUTPUT_TYPE = 'audio'
 
 # set target virtual midi device name
 target_output_name = 'IAC Driver Virtual Midi Cable'
 
-if MIDI_OUT:
+if OUTPUT_TYPE == 'midi':
     # get midi output names and set to target
     output_names = mido.get_output_names()
     if target_output_name in output_names:
@@ -40,6 +40,12 @@ if MIDI_OUT:
         print(f'Error: Could not find {target_output_name} in the midi devices:')
         print(output_names)
         sys.exit(-1)
+
+elif OUTPUT_TYPE == 'audio':
+    s = pyo.Server().boot()
+    s.start()
+    saw_wave = pyo.SuperSaw().out()
+    lp_filter = pyo.MoogLP(saw_wave).out()
 
 # These defaults work nicely with a macbook pro camera on a piece of white paper
 # These thresholds rely on the fact that the laser pointer is usually the brightest thing in the 
@@ -122,14 +128,27 @@ while True:
     # show the current frame
     if SHOW == "frame":
         cv2.imshow(windowName, frame)
-    if SHOW == "mask":
+    elif SHOW == "mask":
         cv2.imshow(windowName, frame)
 
-    # map laser point location to note values and a midi control change
-    note = int((maxLoc[0] / CAM_WIDTH_PX) * 127)
-    value = int((maxLoc[1] / CAM_HEIGHT_PX) * 127)
+    if OUTPUT_TYPE == 'audio':
 
-    if MIDI_OUT:
+        if (maxLoc[0] == 0) & (maxLoc[1] == 0):
+            saw_wave.mul = 0
+        else:
+            saw_wave.mul = 1
+
+        frequency = int((maxLoc[0] / CAM_WIDTH_PX) * 100) + 100
+        cutoff = int((maxLoc[1] / CAM_HEIGHT_PX) * 10000)
+        detune = float((maxLoc[1] / CAM_HEIGHT_PX))
+    
+        saw_wave.setFreq(frequency)
+        saw_wave.detune = detune
+    if OUTPUT_TYPE == 'midi':
+        # map laser point location to note values and a midi control change
+        note = int((maxLoc[0] / CAM_WIDTH_PX) * 127)
+        value = int((maxLoc[1] / CAM_HEIGHT_PX) * 127)
+
         # create and send midi messages
         print(f'Sending midi: Note: {note}\tCC: {value}')
         # msg1 = mido.Message('note_on', note=note, velocity=100)
