@@ -20,4 +20,4 @@ Finally, use pip to install the required packages:
 `$ pip install -r requirements.txt`
 
 ### Testing Laser Tracking
-To test the laser tracker script, run `$ python3 track_laser.py` from the root directory.
+To test the laser tracker script, run `$ python3 src/surface_player.py` from the root directory.
