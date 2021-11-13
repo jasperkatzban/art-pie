@@ -4,3 +4,5 @@ pyo==1.0.4
 numpy==1.21.3
 opencv-python==4.5.3.56
 python-rtmidi==1.4.9
+colorzero==2.0
+gpiozero==1.6.2
