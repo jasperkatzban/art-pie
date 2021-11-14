@@ -1,14 +1,11 @@
 from gpiozero import Motor as m
-
-GPIO_FORWARD_PIN = 4
-GPIO_BACKWARD_PIN = 14
-MOTOR_SPEED = 0.5
+from utils.constants import GPIO_MOTOR_FORWARD, GPIO_MOTOR_BACKWARD, MOTOR_SPEED
 
 class Motor:
     """Handle controlling motor to turn turnable"""
 
     def __init__(self):
-        self.motor = m(forward=GPIO_FORWARD_PIN, backward=GPIO_BACKWARD_PIN, pwm=True)
+        self.motor = m(forward=GPIO_FORWARD, backward=GPIO_BACKWARD, pwm=True)
 
     def start(self):
         """Start turntable motor"""
