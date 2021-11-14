@@ -1,3 +1,4 @@
+from picamera import PiCamera
 import cv2, imutils
 import numpy as np
 import logging
@@ -9,3 +10,4 @@ class Camera:
 
     def __init__(self):
         logger.info('Initializing camera module!')
+        self.camera = PiCamera()
