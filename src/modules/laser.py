@@ -15,3 +15,7 @@ class Laser:
     def off(self):
         """Turns off laser"""
         self.laser.off()
+
+    def is_lit(self):
+        """Check if power to laser is on"""
+        return self.laser.is_lit
