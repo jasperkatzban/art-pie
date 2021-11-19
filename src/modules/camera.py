@@ -5,7 +5,7 @@ import sys
 
 from numpy.core.fromnumeric import shape
 
-from utils.constants import POLYFIT_DEG
+from utils.constants import POLYFIT_DEG, THRESHOLD_LOWER, THRESHOLD_UPPER
 
 logger = logging.getLogger(__name__)
 
@@ -16,8 +16,8 @@ class Camera:
         """Initializes camera module"""
         logger.info('Initializing camera module!')
         if filename:
-            self.current_frame = cv2.imread(filename)
-            if self.current_frame is None:
+            self.current_frame_raw = cv2.imread(filename)
+            if self.current_frame_raw is None:
                 logger.error('Invalid test image file path encountered! Please check the path and try again')
                 sys.exit()
         else:
@@ -32,12 +32,16 @@ class Camera:
             self.height = self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 
             # frame buffers
+            self.current_frame_raw = None
             self.current_frame = None
             self.hsv = None
 
         self.profile = None
         self.profile_size = -1
         self.windowName = 'Video Preview'
+
+        self.lower_threshold = THRESHOLD_LOWER
+        self.upper_threshold = THRESHOLD_UPPER
 
     def get_profile(self):
         """Returns current waveform"""
@@ -46,8 +50,8 @@ class Camera:
     
     def generate_profile(self):
         """Generates a waveform based on laser image"""
-        thresh = self.threshold_frame(self.current_frame)
-        coords = self.generate_coordinates(thresh)
+        mask = self.mask_frame(self.current_frame_raw)
+        coords = self.generate_coordinates(mask)
         if len(coords) > 0:
             self.draw_coords(coords)
             raw_profile = self.scale_coords_to_list(coords, self.profile_size)
@@ -57,11 +61,16 @@ class Camera:
             self.profile = np.zeros(self.profile_size)
 
     # TODO: implement this for our laser
-    def threshold_frame(self, img):
+    def mask_frame(self, img):
         """Thresholds image to isolate laser line"""
-        imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        _, thresh = cv2.threshold(imgray, 127, 255, 0)
-        return thresh
+        # imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # _, thresh = cv2.threshold(imgray, 127, 255, 0)
+
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        mask = cv2.inRange(hsv, self.lower_threshold, self.upper_threshold)
+        self.current_frame = mask
+        # self.show_image(thresh)
+        return mask
 
     def generate_coordinates(self, img):
         """Generates profile from binary thresholded image"""
@@ -106,7 +115,7 @@ class Camera:
 
     def capture_frame(self):
         """Capture current frame"""
-        _, self.current_frame = self.cap.read()
+        _, self.current_frame_raw = self.cap.read()
 
     def show_frame(self):
         """Display current camera frame"""
@@ -115,6 +124,10 @@ class Camera:
     def get_current_frame(self):
         """Return most recent frame"""
         return self.current_frame
+
+    def get_current_frame_raw(self):
+        """Return most recent unprocessed frame"""
+        return self.current_frame_raw
 
     def set_profile_size(self, profile_size):
         """Sets target profile size to generate"""
