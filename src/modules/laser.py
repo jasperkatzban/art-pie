@@ -25,3 +25,8 @@ class Laser:
     def is_lit(self):
         """Check if power to laser is on"""
         return self.laser.is_lit
+    
+    def toggle(self):
+        """Toggles laser state"""
+        logger.info('Toggling laser!')
+        self.laser.toggle()
