@@ -1,4 +1,3 @@
-from gpiozero import Motor as m
 from utils.constants import GPIO_MOTOR_FORWARD, GPIO_MOTOR_BACKWARD, MOTOR_SPEED
 import logging
 
@@ -9,21 +8,20 @@ class Motor:
 
     def __init__(self):
         logger.info('Initializing motor module!')
-        self.motor = m(forward=GPIO_MOTOR_FORWARD, backward=GPIO_MOTOR_BACKWARD, pwm=True)
+        pass
 
     def start(self):
         """Start turntable motor"""
         # TODO: smooth ramp up speed
         logger.info('Turning motor on!')
-        self.motor.forward(MOTOR_SPEED)
+        pass
 
     def stop(self):
         """Start turntable motor"""
         # TODO: smooth ramp down speed
         logger.info('Stopping motor!')
-        self.motor.stop()
-        
+        pass
 
     def is_active(self):
         """Check if motor is active"""
-        return self.motor.is_active
+        pass
