@@ -32,7 +32,10 @@ class Audio:
 
     def view_table(self):
         """Opens a window to view the current waveform."""
+        # table = AtanTable(slope=0.5, size=512)
+        # table.view()
         self.t.view()
+        print(self.t.getTable())
 
     def open_gui(self):
         """Initializes gui."""
@@ -46,15 +49,17 @@ class Audio:
         """Generates array of noise of specified size"""
         return np.random.normal(0.0, 1, size=size)
 
-    def set_samples_from_list(self, samples):
+    def set_samples_from_profile(self, profile):
         """Generates sound based on a list of values"""
-        self.curr_samples = samples
+        self.curr_samples = profile
 
     def set_waveform(self):
         """Sets current sample array to list of values."""
-        self.set_samples_from_noise()
         self.arr[:] = self.curr_samples
 
     def get_buffer_size(self):
         """Returns current buffer size."""
         return self.bs
+
+    def start(self):
+        self.s.start()
