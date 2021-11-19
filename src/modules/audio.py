@@ -11,7 +11,11 @@ class Audio:
         logger.info('Initializing audio module!')
 
         # Initialize audio server
-        self.s = Server(duplex=0, audio='jack').boot()
+        self.s = Server(duplex=0, audio='jack' if env_raspi else 'coreaudio').boot()
+
+        if not self.s.getIsBooted():
+            logger.error('Could not boot audio server!')
+            sys.exit()
 
         # Get the length of an audio block.
         self.bs = self.s.getBufferSize()
