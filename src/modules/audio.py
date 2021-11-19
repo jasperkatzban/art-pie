@@ -11,7 +11,7 @@ class Audio:
         logger.info('Initializing audio module!')
 
         # Initialize audio server
-        self.s = Server().boot()
+        self.s = Server(duplex=0, audio='jack').boot()
 
         # Get the length of an audio block.
         self.bs = self.s.getBufferSize()
@@ -37,7 +37,7 @@ class Audio:
     def open_gui(self):
         """Initializes gui."""
         self.s.gui(locals())
-        
+
     def set_samples_from_noise(self):
         """Generates white noise."""
         self.curr_samples = self.generate_noise(size=self.bs)
