@@ -3,3 +3,5 @@ GPIO_MOTOR_BACKWARD = -1
 MOTOR_SPEED = 0.5
 
 GPIO_LASER = 14 # pin 8 (GPIO14) on raspberry pi 2B V1.1
+
+POLYFIT_DEG = 10
