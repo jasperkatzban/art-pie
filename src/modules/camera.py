@@ -3,6 +3,10 @@ import numpy as np
 import logging
 import sys
 
+from numpy.core.fromnumeric import shape
+
+from utils.constants import POLYFIT_DEG
+
 logger = logging.getLogger(__name__)
 
 class Camera:
@@ -33,7 +37,7 @@ class Camera:
 
         self.profile = None
         self.profile_size = -1
-        self.windowName = 'Surface Player'
+        self.windowName = 'Video Preview'
 
     def get_profile(self):
         """Returns current waveform"""
@@ -44,9 +48,13 @@ class Camera:
         """Generates a waveform based on laser image"""
         thresh = self.threshold_frame(self.current_frame)
         coords = self.generate_coordinates(thresh)
-        raw_profile = self.scale_coords_to_list(coords, self.profile_size)
-        normalized_profile = self.normalize_profile(raw_profile)
-        self.profile = normalized_profile
+        if len(coords) > 0:
+            self.draw_coords(coords)
+            raw_profile = self.scale_coords_to_list(coords, self.profile_size)
+            normalized_profile = self.normalize_profile(raw_profile)
+            self.profile = normalized_profile
+        else:
+            self.profile = np.zeros(self.profile_size)
 
     # TODO: implement this for our laser
     def threshold_frame(self, img):
@@ -58,23 +66,31 @@ class Camera:
     def generate_coordinates(self, img):
         """Generates profile from binary thresholded image"""
         contours, _ = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        cv2.drawContours(self.current_frame, contours, contourIdx=-1, color=(0, 255, 0), thickness=2, lineType=cv2.LINE_AA)
+        if len(contours) == 0:
+            return []
         target = max(contours, key=lambda x: cv2.contourArea(x))
         x = target[:, :, 0].flatten()
         y = target[:, :, 1].flatten()
-        poly = np.poly1d(np.polyfit(x, y, 10)) # make polyfit degree into a var
+        poly = np.poly1d(np.polyfit(x, y, POLYFIT_DEG))
         coords = []
         for _x in range(min(x), max(x), 5):
             coord = list((_x, int(poly(_x))))
             cv2.circle(self.current_frame, coord, 3, [0, 255, 0])
             coords.append(coord)
-
+            
         return np.array(coords, dtype=float)
+
+    def draw_coords(self, coords):
+        """Draws coordinates for profile on image"""
+        for coord in coords:
+            cv2.circle(self.current_frame, (int(coord[0]), int(coord[1])), 3, [0, 0, 255])
 
     def scale_coords_to_list(self, coords, size):
         """Scales profile to specified size"""
         ref_scale = np.linspace(0, size-1, size)
-        coord_len = np.shape(coords)[0]
-        xp = np.linspace(0, coord_len-1, coord_len)
+        coords_len = np.shape(coords)[0]
+        xp = np.linspace(0, coords_len-1, coords_len)
         fp = list(coords[:, 1])
         scaled = np.interp(ref_scale, xp, fp)
         return scaled

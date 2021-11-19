@@ -5,6 +5,7 @@ import argparse
 import logging
 import numpy as np
 from cv2 import waitKey
+from numpy.random.mtrand import normal
 
 # import modules
 from modules.audio import Audio
@@ -23,6 +24,7 @@ def main(arguments):
                     action="store_true")
     parser.add_argument("-v", "--verbose", help="increase output verbosity",
                     action="store_true")
+    parser.add_argument("-i", "--image", help="specify path to input image for testing")
     args = parser.parse_args(arguments)
 
     # specify if not running on raspberry pi, defaults to true
@@ -33,17 +35,31 @@ def main(arguments):
     logger = logging.getLogger(__name__)
 
     # intialize camera module, capture and show a single frame
-    camera = Camera(env_raspi=ENV_RASPI)
-    camera.capture_frame()
-    camera.show_frame()
-
-    # initialize audio module, plays noise when you click start
+    camera = Camera(env_raspi=ENV_RASPI, filename=args.image)
+   
+    # initialize audio module
     audio = Audio(env_raspi=ENV_RASPI)
-    audio.view_table()
-    audio.open_gui()
+
+    # set profile array size
+    profile_size = audio.get_buffer_size()
+    camera.set_profile_size(profile_size)
+
+    # start audio engine
+    audio.start()
 
     # main loop
     while True:
+        # take picture if not using a test image
+        if not args.image:
+            camera.capture_frame()
+        # create profile and send to audio engine
+        camera.generate_profile()
+        profile = camera.get_profile()
+        audio.set_samples_from_profile(profile)
+
+        # draw coords on frame
+        camera.show_frame()
+
         # escape while running using cv2 interrupt
         if waitKey(1) & 0xFF == ord('q'):
             break
