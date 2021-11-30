@@ -27,7 +27,7 @@ Finally, use pip to install the required packages:
 ## Running the Code
 Run the main app from the root directory with the following command:
 
-```python3 src/surface_player.py```
+```python3 src/surface_player.py -h```
 
 ### Testing Laser Tracking
 To test the laser tracker script, run the following from the root directory:
