@@ -5,7 +5,7 @@ import sys
 
 from numpy.core.fromnumeric import shape
 
-from utils.constants import POLYFIT_DEG, THRESHOLD_LOWER, THRESHOLD_UPPER
+from utils.constants import POLYFIT_DEG, THRESHOLD_LOWER, THRESHOLD_UPPER, LINE_RESOLUTION
 
 logger = logging.getLogger(__name__)
 
@@ -82,14 +82,20 @@ class Camera:
         target = max(contours, key=lambda x: cv2.contourArea(x))
         x = target[:, :, 0].flatten()
         y = target[:, :, 1].flatten()
+        
+        return self.map_poly(x, y)
+
+    def map_poly(self, x, y):
+        """Uses polynomial line fitting to generate a list of coordinates based on the detected line"""
         poly = np.poly1d(np.polyfit(x, y, POLYFIT_DEG))
         coords = []
-        for _x in range(min(x), max(x), 5):
+        for _x in range(min(x), max(x), LINE_RESOLUTION):
             y = np.max(int(poly(_x)), 0)
             coord = list((_x, y))
             coords.append(coord)
             
         return np.array(coords, dtype=float)
+
 
     def draw_coords(self, coords):
         """Draws coordinates for profile on image"""
