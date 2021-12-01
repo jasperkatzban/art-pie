@@ -63,11 +63,12 @@ class Camera:
     # TODO: implement this for our laser
     def mask_frame(self, img):
         """Thresholds image to isolate laser line"""
-        # imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        # _, thresh = cv2.threshold(imgray, 127, 255, 0)
-
-        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        # purposely swap BRG with RGB, meaning the red channel is actually
+        # read into HSV as the blue channel and avoids the target hue range being 
+        # spread across the 170 to 10 range (hue goes from 0-180 where min, max are red)
+        hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
         mask = cv2.inRange(hsv, self.lower_threshold, self.upper_threshold)
+        # mask = cv2.bitwise_not(mask)
         self.current_frame = mask
         # self.show_image(thresh)
         return mask
@@ -84,8 +85,8 @@ class Camera:
         poly = np.poly1d(np.polyfit(x, y, POLYFIT_DEG))
         coords = []
         for _x in range(min(x), max(x), 5):
-            coord = list((_x, int(poly(_x))))
-            cv2.circle(self.current_frame, coord, 3, [0, 255, 0])
+            y = np.max(int(poly(_x)), 0)
+            coord = list((_x, y))
             coords.append(coord)
             
         return np.array(coords, dtype=float)
@@ -93,7 +94,7 @@ class Camera:
     def draw_coords(self, coords):
         """Draws coordinates for profile on image"""
         for coord in coords:
-            cv2.circle(self.current_frame, (int(coord[0]), int(coord[1])), 3, [0, 0, 255])
+            cv2.circle(self.current_frame, (int(coord[0]), int(coord[1])), 3, (0, 0, 255), -1)
 
     def scale_coords_to_list(self, coords, size):
         """Scales profile to specified size"""
@@ -106,8 +107,8 @@ class Camera:
 
     def normalize_profile(self, profile):
         """Scales profile values from 0 to 1"""
-        # return profile/np.linalg.norm(profile)
-        return (profile - np.min(profile)) / (np.max(profile) - np.min(profile))
+        range = np.max(profile) - np.min(profile)
+        return (profile - np.min(profile)) / max(range, 1)
 
     def show_image(self, image):
         """Shows an image"""
