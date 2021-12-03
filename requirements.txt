@@ -7,4 +7,3 @@ opencv-python==4.5.3.56
 pyo==1.0.4
 python-rtmidi==1.4.9
 picamera[array]==1.13
-opc==21.0.1
