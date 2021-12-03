@@ -5,7 +5,7 @@ import sys
 import imutils
 
 # enables sliders to set threshold values
-DEBUG_THRESHOLD = False
+DEBUG_THRESHOLD = True
 
 # circle drawing constants
 MAX_LOC_CIRCLE = True
@@ -15,6 +15,9 @@ CENTER_CIRCLE = True
 SHOW = "mask"
 
 # create video capture object
+# for pi, these two lines:
+# cv2.destroyAllWindows
+# cap = cv2.VideoCapture('/dev/video0')
 cap = cv2.VideoCapture(0)
 windowName = 'Laser Finder'
 
@@ -129,7 +132,7 @@ while True:
     if SHOW == "frame":
         cv2.imshow(windowName, frame)
     elif SHOW == "mask":
-        cv2.imshow(windowName, frame)
+        cv2.imshow(windowName, mask)
 
     if OUTPUT_TYPE == 'audio':
 
