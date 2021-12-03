@@ -5,7 +5,7 @@ import argparse
 import logging
 import numpy as np
 from cv2 import waitKey
-from numpy.random.mtrand import normal
+from timeit import default_timer as timer
 
 # import modules
 from modules.audio import Audio
@@ -49,20 +49,24 @@ def main(arguments):
 
     # main loop
     while True:
+        start = timer()
+
         # take picture if not using a test image
         if not args.image:
             camera.capture_frame()
         # create profile and send to audio engine
-        camera.generate_profile()
         profile = camera.get_profile()
         audio.set_samples_from_profile(profile)
 
         # draw coords on frame
-        camera.show_frame()
+        # camera.show_frame()
 
         # escape while running using cv2 interrupt
         if waitKey(1) & 0xFF == ord('q'):
             break
+        
+        end = timer()
+        print(end - start)
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))

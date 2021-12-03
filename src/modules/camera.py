@@ -1,9 +1,13 @@
+from typing import DefaultDict
 import cv2, imutils
 import numpy as np
 import logging
 import sys
 
-from numpy.core.fromnumeric import shape
+from collections import defaultdict
+
+import matplotlib.pyplot as plt
+from numpy.lib.function_base import average
 
 from utils.constants import POLYFIT_DEG, THRESHOLD_LOWER, THRESHOLD_UPPER, LINE_RESOLUTION
 
@@ -48,15 +52,45 @@ class Camera:
         self.generate_profile()
         return self.profile
     
+    def erode_mask(self, mask):
+        """Clean up mask, connect lines, and remove noise"""
+        kernel_dilate = cv2.getStructuringElement(cv2.MORPH_RECT, (6,6))
+        mask = cv2.morphologyEx(mask, cv2.MORPH_DILATE, kernel_dilate)
+
+        kernel_close_sizes = [(3,3), (3,3), (5,5), (7,7)]
+        for kernel_size in kernel_close_sizes:
+            kernel_close = cv2.getStructuringElement(cv2.MORPH_RECT, kernel_size)
+            mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel_close)
+            
+        kernel_erode_sizes = [(3,3), (3,3), (5,5)]
+        for kernel_size in kernel_erode_sizes:
+            kernel_erode = cv2.getStructuringElement(cv2.MORPH_RECT, kernel_size)
+            mask = cv2.morphologyEx(mask, cv2.MORPH_ERODE, kernel_erode)
+        
+        kernel_dilate = cv2.getStructuringElement(cv2.MORPH_RECT, (10,25))
+        mask = cv2.morphologyEx(mask, cv2.MORPH_DILATE, kernel_dilate)
+
+        return mask
+
     def generate_profile(self):
         """Generates a waveform based on laser image"""
         mask = self.mask_frame(self.current_frame_raw)
-        coords = self.generate_coordinates(mask)
+        eroded_mask = self.erode_mask(mask)
+
+        # display frame
+        self.current_frame = eroded_mask
+
+        coords = self.generate_coordinates(eroded_mask)
+
+        # if found coordinates, convert to wavetable
         if len(coords) > 0:
-            self.draw_coords(coords)
+            self.draw_coords(coords, (255, 0, 0))
             raw_profile = self.scale_coords_to_list(coords, self.profile_size)
             normalized_profile = self.normalize_profile(raw_profile)
             self.profile = normalized_profile
+            # self.profile = raw_profile
+        
+        # otherwise return silence
         else:
             self.profile = np.zeros(self.profile_size)
 
@@ -68,25 +102,54 @@ class Camera:
         # spread across the 170 to 10 range (hue goes from 0-180 where min, max are red)
         hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
         mask = cv2.inRange(hsv, self.lower_threshold, self.upper_threshold)
-        # mask = cv2.bitwise_not(mask)
-        self.current_frame = mask
-        # self.show_image(thresh)
         return mask
 
-    def generate_coordinates(self, img):
+    def generate_coordinates(self, mask):
         """Generates profile from binary thresholded image"""
-        contours, _ = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        cv2.drawContours(self.current_frame, contours, contourIdx=-1, color=(0, 255, 0), thickness=2, lineType=cv2.LINE_AA)
+        contour_coords = self.generate_contour_coords(mask)
+        return self.avg_along_x(contour_coords)
+
+    def avg_along_x(self, cnt):
+        """Averages x coordinates to find center of line"""
+        d = DefaultDict(list)
+        
+        for c in cnt:
+            x, y = c
+            d[y].append(x)
+            
+        for y in d.keys():
+            d[y] = np.average(d[y])
+            # alternatively, just take the first element
+            # d[y] = d[y][0]
+
+        return np.array([[coord[1], coord[0]] for coord in d.items()])
+
+    def generate_contour_coords(self, img):
+        """Generate points with highest contour in given mask"""
+        contours, _ = cv2.findContours(img, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+        self.current_frame = cv2.cvtColor(self.current_frame, cv2.COLOR_GRAY2RGB)
+
         if len(contours) == 0:
             return []
-        target = max(contours, key=lambda x: cv2.contourArea(x))
-        x = target[:, :, 0].flatten()
-        y = target[:, :, 1].flatten()
-        
-        return self.map_poly(x, y)
 
-    def map_poly(self, x, y):
+        # find maximum contours
+        min_contour_area = 0
+        # print([cv2.contourArea(x) for x in contours])
+        valid_contours = list(filter(lambda x: cv2.contourArea(x) > min_contour_area, contours))
+        # print([cv2.contourArea(x) for x in valid_contours])
+        
+        valid_contours = np.concatenate(valid_contours)
+        # valid_contours = np.concatenate(contours)
+
+        # TODO: there's a cleaner way to do this
+        return np.array([coord[0] for coord in valid_contours])
+
+    # TODO: write other funcs to convert points to wavetable
+    def map_poly(self, coords):
         """Uses polynomial line fitting to generate a list of coordinates based on the detected line"""
+        x = coords[:, 0]
+        y = coords[:, 1]
+
         poly = np.poly1d(np.polyfit(x, y, POLYFIT_DEG))
         coords = []
         for _x in range(min(x), max(x), LINE_RESOLUTION):
@@ -96,11 +159,10 @@ class Camera:
             
         return np.array(coords, dtype=float)
 
-
-    def draw_coords(self, coords):
+    def draw_coords(self, coords, color=(255, 255, 255)):
         """Draws coordinates for profile on image"""
         for coord in coords:
-            cv2.circle(self.current_frame, (int(coord[0]), int(coord[1])), 3, (0, 0, 255), -1)
+            cv2.circle(self.current_frame, (int(coord[0]), int(coord[1])), 5, color)
 
     def scale_coords_to_list(self, coords, size):
         """Scales profile to specified size"""
