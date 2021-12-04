@@ -14,9 +14,10 @@ LINE_RESOLUTION = 5
 
 # vals when swapping red and blue
 # in a dark room
+# on a white object, detects the area outside of the bright center beam
 min_hue, max_hue = 130, 180
-min_sat, max_sat = 0, 255
-min_val, max_val = 180, 255
+min_sat, max_sat = 50, 255
+min_val, max_val = 100, 255
 
 from numpy import array
 THRESHOLD_LOWER = array([min_hue, min_sat, min_val])
