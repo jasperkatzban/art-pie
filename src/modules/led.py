@@ -1,11 +1,11 @@
 #!/user/bin/env python
 
-from utils.opc import opc 
+import opc, time
 
 sideLEDs = 12
 topLEDs = 20
 
-client = opc.Client('')
+client = opc.Client('localhost:7890')
 
 black = [ (0,0,0) ] * topLEDs
 white = [ (255,255,255) ] * topLEDs
