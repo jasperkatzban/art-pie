@@ -40,6 +40,9 @@ def main(arguments):
     # initialize audio module
     audio = Audio(env_raspi=ENV_RASPI)
 
+    # initialize motor module
+    motor = Motor()
+
     # set profile array size
     profile_size = audio.get_buffer_size()
     camera.set_profile_size(profile_size)
@@ -47,16 +50,21 @@ def main(arguments):
     # start audio engine
     audio.start()
 
-    # main loop
+    # main loop, this iterates continuously forever
     while True:
+        # timing the main loop for debugging purposes
         start = timer()
 
         # take picture if not using a test image
         if not args.image:
             camera.capture_frame()
+
         # create profile and send to audio engine
         profile = camera.get_profile()
         audio.set_samples_from_profile(profile)
+
+        # move the motor by one step
+        motor.step()
 
         # draw coords on frame
         # camera.show_frame()
@@ -65,8 +73,9 @@ def main(arguments):
         if waitKey(1) & 0xFF == ord('q'):
             break
         
+        # calculate and print elapsed time for a single loop
         end = timer()
-        print(end - start)
+        logger.debug(f'Current loop time: {end - start}')
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
