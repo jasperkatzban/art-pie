@@ -45,7 +45,7 @@ if OUTPUT_TYPE == 'midi':
         sys.exit(-1)
 
 elif OUTPUT_TYPE == 'audio':
-    s = pyo.Server(duplex=0, audio='jack' if env_raspi else 'coreaudio').boot()
+    s = pyo.Server(duplex=0, audio='jack').boot()
     s.start()
     saw_wave = pyo.SuperSaw().out()
     lp_filter = pyo.MoogLP(saw_wave).out()
