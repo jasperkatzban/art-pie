@@ -1,0 +1,7 @@
+colorzero==2.0
+gpiozero==1.6.2
+imutils==0.5.4
+mido==1.2.10
+pyo==1.0.4
+python-rtmidi==1.4.9
+picamera[array]==1.13
