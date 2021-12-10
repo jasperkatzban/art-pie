@@ -40,7 +40,7 @@ class Motor:
             #     logger.debug('Triggered motor movement cycle!')
                 # self.step(num_steps)
     
-    def step(self, num_steps=10, backwards=False):
+    def step(self, num_steps=30, backwards=False):
         """Move the motor a specified number of steps"""
         # TODO: use smooth steps instead
         if self.env_raspi:
