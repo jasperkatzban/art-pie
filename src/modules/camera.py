@@ -9,7 +9,7 @@ from collections import defaultdict
 import matplotlib.pyplot as plt
 from numpy.lib.function_base import average
 
-from utils.constants import POLYFIT_DEG, THRESHOLD_LOWER, THRESHOLD_UPPER, LINE_RESOLUTION
+from utils.constants import POLYFIT_DEG, THRESHOLD_LOWER, THRESHOLD_UPPER, LINE_RESOLUTION, X_CROP_PX
 
 logger = logging.getLogger(__name__)
 
@@ -184,7 +184,9 @@ class Camera:
 
     def capture_frame(self):
         """Capture current frame"""
-        _, self.current_frame_raw = self.cap.read()
+        _, frame = self.cap.read()
+        X_CROP_PX = 200
+        self.current_frame_raw = frame[:, X_CROP_PX:self.width-X_CROP_PX]
 
     def show_frame(self):
         """Display current camera frame"""

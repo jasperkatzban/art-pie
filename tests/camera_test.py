@@ -8,9 +8,14 @@ windowName = 'Laser Finder'
 while True:
     # Capture each frame
     ret, frame = cap.read()
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    print(width, height)
+    # hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    cv2.imshow(windowName, frame)
+    n = 200
+    print(type(frame))
+    cv2.imshow(windowName, frame[:, n:width-n])
 
     # quit by pressing CTRL/CMD + Q
     if cv2.waitKey(1) & 0xFF == ord('q'):

@@ -5,6 +5,8 @@ GPIO_LASER = 14 # pin 8 (GPIO14) on raspberry pi 2B V1.1
 POLYFIT_DEG = 5
 LINE_RESOLUTION = 5
 
+X_CROP_PX = 150
+
 # vals working in a dark room kinda
 # vals if treating red normally
 # min_hue, max_hue = 170, 180
