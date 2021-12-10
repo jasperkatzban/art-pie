@@ -51,6 +51,7 @@ def main(arguments):
 
     # initialize led strips
     leds = Leds(env_raspi=ENV_RASPI)
+    leds.set_color_blue()
 
     # set profile array size
     profile_size = audio.get_buffer_size()
@@ -83,7 +84,7 @@ def main(arguments):
         # motor.step()
 
         # led callback
-        leds.update()
+        # leds.update()
 
         # draw coords on frame
         if args.preview:

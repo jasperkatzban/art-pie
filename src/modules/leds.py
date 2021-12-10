@@ -44,6 +44,10 @@ class Leds:
         
         self.counter += 1
 
+    def set_color_blue(self):
+        """Set leds to specific color"""
+        self.client.put_pixels(self.blue)
+
 """
     for i in range(0, 17):
         pink = [ (255, 0, 255) ] * i
