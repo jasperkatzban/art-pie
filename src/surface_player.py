@@ -45,12 +45,18 @@ def main(arguments):
     # initialize motor module
     motor = Motor(env_raspi=ENV_RASPI)
 
+    # initialize laser module
+    laser = Laser(env_raspi=ENV_RASPI)
+
     # set profile array size
     profile_size = audio.get_buffer_size()
     camera.set_profile_size(profile_size)
 
     # start audio engine
     audio.start()
+
+    # turn on laser
+    laser.on()
 
     # main loop, this iterates continuously forever
     while True:
