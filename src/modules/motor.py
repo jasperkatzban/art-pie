@@ -1,5 +1,6 @@
 import threading
 import logging
+import time
 
 from utils.constants import MOTOR_NUM_STEPS_REVOLUTION
 
@@ -32,7 +33,10 @@ class Motor:
 
     def step_loop(self, num_steps=1):
         while True:
-            self.step(num_steps)
+            pass
+            # if int(time.time() * 1000) % 1000 == 0:
+            #     logger.debug('Triggered motor movement cycle!')
+                # self.step(num_steps)
     
     def step(self, num_steps=1, backwards=False):
         """Move the motor a specified number of steps"""

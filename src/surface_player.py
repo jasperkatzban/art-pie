@@ -81,7 +81,7 @@ def main(arguments):
         audio.set_samples_from_profile(profile)
 
         # # move the motor by one step
-        # motor.step()
+        motor.step(100)
 
         # led callback
         # leds.update()
