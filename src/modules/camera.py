@@ -206,7 +206,8 @@ class Camera:
     def capture_frame(self):
         """Capture current frame"""
         _, frame = self.cap.read()
-        self.current_frame_raw = frame[:, X_CROP_PX:int(self.width)-X_CROP_PX]
+        if frame is not None:
+            self.current_frame_raw = frame[:, X_CROP_PX:(int(self.width)-X_CROP_PX)]
 
     def show_frame(self):
         """Display current camera frame"""
