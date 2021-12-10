@@ -25,6 +25,8 @@ def main(arguments):
     parser.add_argument("-v", "--verbose", help="increase output verbosity",
                     action="store_true")
     parser.add_argument("-i", "--image", help="specify path to input image for testing")
+    parser.add_argument("-p", "--preview", help="preview camera image",
+                    action="store_true")
     args = parser.parse_args(arguments)
 
     # specify if not running on raspberry pi, defaults to true
@@ -41,7 +43,7 @@ def main(arguments):
     audio = Audio(env_raspi=ENV_RASPI)
 
     # initialize motor module
-    motor = Motor()
+    motor = Motor(env_raspi=ENV_RASPI)
 
     # set profile array size
     profile_size = audio.get_buffer_size()
@@ -67,7 +69,8 @@ def main(arguments):
         motor.step()
 
         # draw coords on frame
-        # camera.show_frame()
+        if args.preview:
+            camera.show_frame()
 
         # escape while running using cv2 interrupt
         if waitKey(1) & 0xFF == ord('q'):
