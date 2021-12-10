@@ -64,7 +64,7 @@ def main(arguments):
     laser.on()
 
     # begin spinning motor
-    motor.start_spin()
+    # motor.start_spin()
 
     # main loop, this iterates continuously forever
     while True:
@@ -81,8 +81,9 @@ def main(arguments):
         audio.set_samples_from_profile(profile)
 
         # # move the motor by one step
-        motor.step(100)
-
+        # motor.step(100)
+        motor.start_spin()
+        
         # led callback
         # leds.update()
 
