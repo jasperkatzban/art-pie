@@ -12,6 +12,7 @@ from modules.audio import Audio
 from modules.camera import Camera
 from modules.laser import Laser
 from modules.motor import Motor
+from modules.leds import Leds
 
 def main(arguments):
 
@@ -48,6 +49,9 @@ def main(arguments):
     # initialize laser module
     laser = Laser(env_raspi=ENV_RASPI)
 
+    # initialize led strips
+    leds = Leds(env_raspi=ENV_RASPI)
+
     # set profile array size
     profile_size = audio.get_buffer_size()
     camera.set_profile_size(profile_size)
@@ -57,6 +61,9 @@ def main(arguments):
 
     # turn on laser
     laser.on()
+
+    # begin spinning motor
+    motor.start_spin()
 
     # main loop, this iterates continuously forever
     while True:
@@ -72,8 +79,11 @@ def main(arguments):
         profile = camera.get_profile()
         audio.set_samples_from_profile(profile)
 
-        # move the motor by one step
-        motor.step()
+        # # move the motor by one step
+        # motor.step()
+
+        # led callback
+        leds.update()
 
         # draw coords on frame
         if args.preview:
@@ -87,6 +97,13 @@ def main(arguments):
         if args.verbose:
             end = timer()
             logger.debug(f'Current loop time: {end - start}')
+
+    # turn everything off
+    motor.stop_spin()
+    motor.release()
+    laser.off()
+
+    logger.info('Exiting program!')
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))

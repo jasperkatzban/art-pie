@@ -1,3 +1,4 @@
+import threading
 import logging
 
 from utils.constants import MOTOR_NUM_STEPS_REVOLUTION
@@ -20,6 +21,15 @@ class Motor:
         if self.env_raspi:
             self.kit = MotorKit()
 
+    def start_spin(self):
+        """Start spinning (on separate thread)"""
+        self.thread = threading.Thread(target=self.step)
+        self.thread.start()
+    
+    def stop_spin(self):
+        """Stop spinning"""
+        self.thread.join()
+    
     def step(self, num_steps=1, backwards=False):
         """Move the motor a specified number of steps"""
         if self.env_raspi:
