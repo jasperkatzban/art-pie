@@ -23,15 +23,20 @@ class Motor:
 
     def start_spin(self):
         """Start spinning (on separate thread)"""
-        self.thread = threading.Thread(target=self.step)
+        self.thread = threading.Thread(target=self.step_loop)
         self.thread.start()
     
     def stop_spin(self):
         """Stop spinning"""
         self.thread.join()
+
+    def step_loop(self, num_steps=1):
+        while True:
+            self.step(num_steps)
     
     def step(self, num_steps=1, backwards=False):
         """Move the motor a specified number of steps"""
+        # TODO: use smooth steps instead
         if self.env_raspi:
             for _ in range(num_steps):
                 logger.debug('Steping Motor!')
