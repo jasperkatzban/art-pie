@@ -51,9 +51,9 @@ class Camera:
         self.kernel_close_sizes = [(3,3), (5,5), (7,7)]
         self.kernel_erode_sizes = [(3,3), (3,3)]
 
-    def get_profile(self):
+    def get_profile(self, fast=False):
         """Returns current waveform"""
-        self.generate_profile()
+        self.generate_profile(fast=fast)
         return self.profile
     
     def erode_mask_slow(self, mask):
@@ -93,15 +93,18 @@ class Camera:
 
         return mask
 
-    def generate_profile(self):
+    def generate_profile(self, fast=False):
         """Generates a waveform based on laser image"""
         mask = self.mask_frame(self.current_frame_raw)
-        eroded_mask = self.erode_mask(mask)
 
-        # display frame
-        self.current_frame = eroded_mask
-
-        coords = self.generate_coordinates(eroded_mask)
+        if not fast:
+            eroded_mask = self.erode_mask(mask)
+            # display frame
+            self.current_frame = eroded_mask
+            coords = self.generate_coordinates(eroded_mask)
+        else:
+            self.current_frame = mask
+            coords = self.generate_coordinates(mask)
 
         # if found coordinates, convert to wavetable
         if len(coords) > 0:

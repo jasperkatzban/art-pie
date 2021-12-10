@@ -28,6 +28,8 @@ def main(arguments):
     parser.add_argument("-i", "--image", help="specify path to input image for testing")
     parser.add_argument("-p", "--preview", help="preview camera image",
                     action="store_true")
+    parser.add_argument("-f", "--fast", help="faster!",
+                    action="store_true")
     args = parser.parse_args(arguments)
 
     # specify if not running on raspberry pi, defaults to true
@@ -77,13 +79,13 @@ def main(arguments):
             camera.capture_frame()
 
         # create profile and send to audio engine
-        profile = camera.get_profile()
+        profile = camera.get_profile(fast=args.fast)
         audio.set_samples_from_profile(profile)
 
         # # move the motor by one step
         # motor.step(100)
         motor.start_spin()
-        
+
         # led callback
         # leds.update()
 
