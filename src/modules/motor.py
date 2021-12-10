@@ -45,9 +45,9 @@ class Motor:
             for _ in range(num_steps):
                 logger.debug('Steping Motor!')
                 if backwards:
-                    self.kit.stepper1.onestep(direction=stepper.BACKWARD, style=stepper.SINGLE)
+                    self.kit.stepper1.onestep(direction=stepper.BACKWARD, style=stepper.DOUBLE)
                 else:
-                    self.kit.stepper1.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
+                    self.kit.stepper1.onestep(direction=stepper.FORWARD, style=stepper.DOUBLE)
         
     def full_turn(self, backwards=False):
         """Moves the motor one revolution. Set `backwards` flag to change direction"""
