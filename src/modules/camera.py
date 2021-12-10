@@ -47,12 +47,16 @@ class Camera:
         self.lower_threshold = THRESHOLD_LOWER
         self.upper_threshold = THRESHOLD_UPPER
 
+        self.kernel_dilate = cv2.getStructuringElement(cv2.MORPH_RECT, (6,6))
+        self.kernel_close_sizes = [(3,3), (5,5), (7,7)]
+        self.kernel_erode_sizes = [(3,3), (3,3)]
+
     def get_profile(self):
         """Returns current waveform"""
         self.generate_profile()
         return self.profile
     
-    def erode_mask(self, mask):
+    def erode_mask_slow(self, mask):
         """Clean up mask, connect lines, and remove noise"""
         kernel_dilate = cv2.getStructuringElement(cv2.MORPH_RECT, (6,6))
         mask = cv2.morphologyEx(mask, cv2.MORPH_DILATE, kernel_dilate)
@@ -72,6 +76,23 @@ class Camera:
 
         return mask
 
+    def erode_mask(self, mask):
+        """Clean up mask, connect lines, and remove noise"""
+        mask = cv2.morphologyEx(mask, cv2.MORPH_DILATE, self.kernel_dilate)
+
+        for kernel_size in self.kernel_close_sizes:
+            kernel_close = cv2.getStructuringElement(cv2.MORPH_RECT, kernel_size)
+            mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel_close)
+            
+        for kernel_size in self.kernel_erode_sizes:
+            kernel_erode = cv2.getStructuringElement(cv2.MORPH_RECT, kernel_size)
+            mask = cv2.morphologyEx(mask, cv2.MORPH_ERODE, kernel_erode)
+        
+        # kernel_dilate = cv2.getStructuringElement(cv2.MORPH_RECT, (10,25))
+        # mask = cv2.morphologyEx(mask, cv2.MORPH_DILATE, kernel_dilate)
+
+        return mask
+
     def generate_profile(self):
         """Generates a waveform based on laser image"""
         mask = self.mask_frame(self.current_frame_raw)
@@ -84,7 +105,7 @@ class Camera:
 
         # if found coordinates, convert to wavetable
         if len(coords) > 0:
-            self.draw_coords(coords, (255, 0, 0))
+            # self.draw_coords(coords, (255, 0, 0))
             raw_profile = self.scale_coords_to_list(coords, self.profile_size)
             normalized_profile = self.normalize_profile(raw_profile)
             self.profile = normalized_profile
@@ -138,8 +159,8 @@ class Camera:
         valid_contours = list(filter(lambda x: cv2.contourArea(x) > min_contour_area, contours))
         # print([cv2.contourArea(x) for x in valid_contours])
         
-        valid_contours = np.concatenate(valid_contours)
-        # valid_contours = np.concatenate(contours)
+        # valid_contours = np.concatenate(valid_contours)
+        valid_contours = np.concatenate(contours)
 
         # TODO: there's a cleaner way to do this
         return np.array([coord[0] for coord in valid_contours])
@@ -185,8 +206,7 @@ class Camera:
     def capture_frame(self):
         """Capture current frame"""
         _, frame = self.cap.read()
-        X_CROP_PX = 200
-        self.current_frame_raw = frame[:, X_CROP_PX:self.width-X_CROP_PX]
+        self.current_frame_raw = frame[:, X_CROP_PX:int(self.width)-X_CROP_PX]
 
     def show_frame(self):
         """Display current camera frame"""
