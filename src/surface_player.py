@@ -61,7 +61,8 @@ def main(arguments):
     # main loop, this iterates continuously forever
     while True:
         # timing the main loop for debugging purposes
-        start = timer()
+        if args.verbose:
+            start = timer()
 
         # take picture if not using a test image
         if not args.image:
@@ -83,8 +84,9 @@ def main(arguments):
             break
         
         # calculate and print elapsed time for a single loop
-        end = timer()
-        logger.debug(f'Current loop time: {end - start}')
+        if args.verbose:
+            end = timer()
+            logger.debug(f'Current loop time: {end - start}')
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
