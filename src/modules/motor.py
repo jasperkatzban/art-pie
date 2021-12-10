@@ -40,16 +40,16 @@ class Motor:
             #     logger.debug('Triggered motor movement cycle!')
                 # self.step(num_steps)
     
-    def step(self, num_steps=30, backwards=False):
+    def step(self, num_steps=5, backwards=False):
         """Move the motor a specified number of steps"""
         # TODO: use smooth steps instead
         if self.env_raspi:
             for _ in range(num_steps):
                 logger.debug('Steping Motor!')
                 if backwards:
-                    self.kit.stepper1.onestep(direction=stepper.BACKWARD, style=stepper.DOUBLE)
+                    self.kit.stepper1.onestep(direction=stepper.BACKWARD, style=stepper.SINGLE)
                 else:
-                    self.kit.stepper1.onestep(direction=stepper.FORWARD, style=stepper.DOUBLE)
+                    self.kit.stepper1.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
         
     def full_turn(self, backwards=False):
         """Moves the motor one revolution. Set `backwards` flag to change direction"""
