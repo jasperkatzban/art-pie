@@ -23,6 +23,7 @@ class Audio:
         # Create a table of length `buffer size` and read it in loop.
         self.t = DataTable(size=self.bs)
         self.osc = TableRead(self.t, freq=self.t.getRate(), loop=True, mul=.1).out()
+        self.effect = Freeverb(self.osc).out()
 
         # Share the table's memory with a numpy array.
         self.arr = np.asarray(self.t.getBuffer())
