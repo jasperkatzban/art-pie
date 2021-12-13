@@ -87,7 +87,7 @@ def main(arguments):
         motor.start_spin()
 
         # led callback
-        # leds.update()
+        leds.retrieve_profile(profile)
 
         # draw coords on frame
         if args.preview:

@@ -2,6 +2,7 @@
 
 from modules.opc import *
 import logging
+import numpy as np 
 
 logger = logging.getLogger(__name__)
 
@@ -47,20 +48,3 @@ class Leds:
     def set_color_blue(self):
         """Set leds to specific color"""
         self.client.put_pixels(self.blue)
-
-"""
-    for i in range(0, 17):
-        pink = [ (255, 0, 255) ] * i
-        client.put_pixels(pink)
-        time.sleep(1)
-        blue = [ (51, 255, 255) ] * i
-        client.put_pixels(blue)
-        time.sleep(1)
-    for range(17,34):
-        blue = [ (51, 255, 255) ] * i
-        client.put_pixels(blue)
-        time.sleep(1)
-        pink = [ (255, 0, 255) ] * i
-        client.put_pixels(pink)
-        time.sleep(1)
-"""
