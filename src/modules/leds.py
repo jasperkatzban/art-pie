@@ -7,7 +7,8 @@ logger = logging.getLogger(__name__)
 
 class Leds:
     """
-    LED control
+    Class for addressable LED control, using the Open Pixel Control
+    library.
     """
 
     def __init__(self, env_raspi=True):
@@ -76,8 +77,9 @@ class Leds:
     #         logger.debug('Color: Green')
 
     #     logger.debug('Profile Avg: %s' %profile_avg)
-    #     return self.client.put_pixels(color)
+    #     self.client.put_pixels(color)
 
     def update(self, profile, profile_size):
+        """Updates pixels based on current generated color values"""
         color = [self.set_hue(profile, profile_size)] * self.numLED
-        return self.client.put_pixels(color)
+        self.client.put_pixels(color)
