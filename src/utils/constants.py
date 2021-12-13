@@ -24,3 +24,6 @@ min_val, max_val = 100, 255
 from numpy import array
 THRESHOLD_LOWER = array([min_hue, min_sat, min_val])
 THRESHOLD_UPPER = array([max_hue, max_sat, max_val])
+
+LED_HUE_THRESHOLD_LOWER = 0.3
+LED_HUE_THRESHOLD_UPPER = 0.7
