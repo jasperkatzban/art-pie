@@ -44,7 +44,7 @@ def main(arguments):
     camera = Camera(env_raspi=ENV_RASPI, filename=args.image, use_morph=args.use_morph)
    
     # initialize audio module
-    audio = Audio(env_raspi=ENV_RASPI, volume=args.volume)
+    audio = Audio(env_raspi=ENV_RASPI, volume=args.volume if args.volume is not None else 100)
 
     # initialize motor module
     motor = Motor(env_raspi=ENV_RASPI)
