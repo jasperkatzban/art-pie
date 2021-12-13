@@ -1,7 +1,6 @@
 from .opc import Client
 import logging
 import numpy as np 
-
 from utils.constants import LED_HUE_THRESHOLD_LOWER, LED_HUE_THRESHOLD_UPPER
 
 logger = logging.getLogger(__name__)
@@ -44,7 +43,7 @@ class Leds:
         else:
             color = self.green
             logger.debug('Color: Green')
-        
+
         logger.debug('Profile Avg: %s' %profile_avg)
         return self.client.put_pixels(color)
 
