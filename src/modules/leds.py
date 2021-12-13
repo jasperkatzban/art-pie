@@ -34,13 +34,18 @@ class Leds:
     def set_hue(self, profile_avg):
         if profile_avg <= self.bot_thresh:
             color = self.pink
+            logger.debug('Color: Pink')
         elif profile_avg > self.bot_thresh and profile_avg < self.top_thresh:
             color = self.purple
+            logger.bedug('Color: Purple')
         elif profile_avg >= self.top_thresh:
             color = self.blue
+            logger.debug('Color: Blue')
         else:
             color = self.green
+            logger.debug('Color: Green')
         
+        logger.debug('Profile Avg: %s' %profile_avg)
         return self.client.put_pixels(color)
 
     def update(self, profile):
