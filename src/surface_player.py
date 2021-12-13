@@ -30,6 +30,7 @@ def main(arguments):
                     action="store_true")
     parser.add_argument("-m", "--use-morph", help="slower but more accurate profile generation using morphological transformations",
                     action="store_true")
+    parser.add_argument("--volume", type=int, help="set volume to integer between 0 and 100")
     args = parser.parse_args(arguments)
 
     # specify if not running on raspberry pi, defaults to true
@@ -43,7 +44,7 @@ def main(arguments):
     camera = Camera(env_raspi=ENV_RASPI, filename=args.image, use_morph=args.use_morph)
    
     # initialize audio module
-    audio = Audio(env_raspi=ENV_RASPI)
+    audio = Audio(env_raspi=ENV_RASPI, volume=args.volume)
 
     # initialize motor module
     motor = Motor(env_raspi=ENV_RASPI)
