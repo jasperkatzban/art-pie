@@ -1,4 +1,4 @@
-import opc
+from .opc import Client
 import logging
 import numpy as np 
 
@@ -44,6 +44,5 @@ class Leds:
         return self.client.put_pixels(color)
 
     def update(self, profile):
-        profile = self.get_profile()
         profile_avg = np.average(profile)
         return self.set_hue(profile_avg)
