@@ -28,7 +28,7 @@ def main(arguments):
     parser.add_argument("-i", "--image", help="specify path to input image for testing")
     parser.add_argument("-p", "--preview", help="preview camera image",
                     action="store_true")
-    parser.add_argument("-f", "--fast", help="faster!",
+    parser.add_argument("-m", "--use-morph", help="slower but more accurate profile generation using morphological transformations",
                     action="store_true")
     args = parser.parse_args(arguments)
 
@@ -40,7 +40,7 @@ def main(arguments):
     logger = logging.getLogger(__name__)
 
     # intialize camera module, capture and show a single frame
-    camera = Camera(env_raspi=ENV_RASPI, filename=args.image)
+    camera = Camera(env_raspi=ENV_RASPI, filename=args.image, use_morph=args.use_morph)
    
     # initialize audio module
     audio = Audio(env_raspi=ENV_RASPI)
@@ -53,7 +53,6 @@ def main(arguments):
 
     # initialize led strips
     leds = Leds(env_raspi=ENV_RASPI)
-    leds.set_color_blue()
 
     # set profile array size
     profile_size = audio.get_buffer_size()
@@ -79,7 +78,7 @@ def main(arguments):
             camera.capture_frame()
 
         # create profile and send to audio engine
-        profile = camera.get_profile(fast=args.fast)
+        profile = camera.get_profile()
         audio.set_samples_from_profile(profile)
 
         # # move the motor by one step

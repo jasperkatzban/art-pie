@@ -7,6 +7,8 @@ LINE_RESOLUTION = 5
 
 X_CROP_PX = 150
 
+MIN_CONTOUR_AREA = 0
+
 # vals working in a dark room kinda
 # vals if treating red normally
 # min_hue, max_hue = 170, 180
