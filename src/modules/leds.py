@@ -1,6 +1,4 @@
-# !/usr/bin/env python
-
-from modules.opc import *
+import opc
 import logging
 import numpy as np 
 
@@ -26,25 +24,26 @@ class Leds:
         self.purple = [ (102, 0, 204) ] * self.numLED
         self.pink = [ (255, 0, 255) ] * self.numLED
         self.blue = [ (51, 255, 255) ] * self.numLED
+        self.green = [ (0, 255, 0) ] * self.numLED
 
-        self.counter = 0
-        self.color_state = 0
+        self.bot_thresh = 0.3
+        self.top_thresh = 0.7    
 
-        self.color_state_map = [self.pink, self.purple, self.blue]
-    
-    def update(self):
-        if self.counter % 100 == 0:
+    ## CALL INSIDE OF MAIN UPDATE FUNCTION
 
-            if self.color_state >= 2:
-                self.color_state = 0
-            else:
-                logger.debug('Changing led color!')
-                self.color_state += 1
-
-            self.client.put_pixels(self.color_state_map[self.color_state])
+    def set_hue(self, profile_avg):
+        if profile_avg <= self.bot_thresh:
+            color = self.pink
+        elif profile_avg > self.bot_thresh and profile_avg < self.top_thresh:
+            color = self.purple
+        elif profile_avg >= self.top_thresh:
+            color = self.blue
+        else:
+            color = self.green
         
-        self.counter += 1
+        return self.client.put_pixels(color)
 
-    def set_color_blue(self):
-        """Set leds to specific color"""
-        self.client.put_pixels(self.blue)
+    def update(self, profile):
+        profile = self.get_profile()
+        profile_avg = np.average(profile)
+        return self.set_hue(profile_avg)
