@@ -7,11 +7,14 @@ logger = logging.getLogger(__name__)
 class Audio:
     """Handle audio generation"""
 
-    def __init__(self, env_raspi=True):
+    def __init__(self, env_raspi=True, volume=100):
         logger.info('Initializing audio module!')
 
         # Initialize audio server
         self.s = Server(duplex=0, audio='jack' if env_raspi else 'coreaudio').boot()
+
+        # Set global volume
+        self.volume = volume
 
         if not self.s.getIsBooted():
             logger.error('Could not boot audio server!')
@@ -54,11 +57,12 @@ class Audio:
 
     def generate_noise(self, size):
         """Generates array of noise of specified size"""
-        return np.random.normal(0.0, 1, size=size)
+        max = self.volume / 100
+        return np.random.normal(0.0, max, size=size)
 
     def set_samples_from_profile(self, profile):
         """Generates sound based on a list of values"""
-        self.curr_samples = profile
+        self.curr_samples = profile * (self.volume / 100)
 
     def set_waveform(self):
         """Sets current sample array to list of values."""
