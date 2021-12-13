@@ -58,6 +58,7 @@ def main(arguments):
     # set profile array size
     profile_size = audio.get_buffer_size()
     camera.set_profile_size(profile_size)
+    leds.set_profile_size(profile_size)
 
     # start audio engine
     audio.start()
