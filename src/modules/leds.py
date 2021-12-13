@@ -36,7 +36,7 @@ class Leds:
             logger.debug('Color: Pink')
         elif profile_avg > self.bot_thresh and profile_avg < self.top_thresh:
             color = self.purple
-            logger.bedug('Color: Purple')
+            logger.debug('Color: Purple')
         elif profile_avg >= self.top_thresh:
             color = self.blue
             logger.debug('Color: Blue')
