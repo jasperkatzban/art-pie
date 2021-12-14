@@ -128,6 +128,14 @@ This will show the allowed options and commands for running the program. For mos
 ## Software Design
 Since this project interfaces between multiple inputs and outputs – a laser, motor, camera, speakers, and addressable LEDs – it made sense to split each of these modules into separate classes and call simpler update functions from a central executable.
 
+### Main Executable
+Each module is initialized and connected together in [`src/surface_player.py`](src/surface_player.py). When this file is run, it handles the following:
+
+- argument parsing to support various features and options
+- initialization of modules to control each physical component
+- continuous looping to capture an image, process it, and send the processed data to the audio and LEDs modules
+- shutdown of modules upon program quit
+
 Modules can be found in the [`src/modules/`](src/modules/) directory. A brief overview of each module and how it interacts with the system is listed below. Note that helper functions and most internal functions are omitted here, but documented in their respective classes.
 
 ### Camera
@@ -166,5 +174,28 @@ The `Leds` module handles control of the addressable LEDs mounted throughout the
 Finally, various constants and macros are listed in [`src/utils/constants.py`](src/utils/constants.py).
 
 ## External Dependencies
-The following are required to run this program. Note that requirements may already be satisfied and additional platform-specific dependencies may be required depending on your target environment 
+The following are required to run this program. Note that requirements may already be satisfied and additional platform-specific dependencies may be required depending on your target environment.
 
+### General Use
+- [pip3](https://pypi.org/project/pip/)
+- [Numpy](https://numpy.org)
+
+### Camera & Image Processing
+- [OpenCV](https://github.com/opencv/opencv)
+
+### Audio
+- [pyo](http://ajaxsoundstudio.com/software/pyo/)
+- [portaudio](http://www.portaudio.com)
+- [portmidi](https://github.com/mixxxdj/portmidi)
+- [libsndfile](https://github.com/libsndfile/libsndfile)
+- [liblo](https://github.com/radarsat1/liblo)
+- [jack](https://jackaudio.org)
+
+### Motor Control
+- [Adafruit Motorkit](https://circuitpython.readthedocs.io/projects/motorkit/en/latest/)
+
+### Laser Control
+- [GPIOZero](https://gpiozero.readthedocs.io/en/stable/)
+
+### Led Control
+- [Fadecandy](https://github.com/scanlime/fadecandy)
