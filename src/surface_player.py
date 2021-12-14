@@ -30,6 +30,8 @@ def main(arguments):
                     action="store_true")
     parser.add_argument("-m", "--use-morph", help="slower but more accurate profile generation using morphological transformations",
                     action="store_true")
+    parser.add_argument("--disable-audio", help="disables audio for debugging purposes",
+                    action="store_true")
     parser.add_argument("--volume", type=int, help="set volume to integer between 0 and 100")
     args = parser.parse_args(arguments)
 
@@ -44,7 +46,8 @@ def main(arguments):
     camera = Camera(env_raspi=ENV_RASPI, filename=args.image, use_morph=args.use_morph)
    
     # initialize audio module
-    audio = Audio(env_raspi=ENV_RASPI, volume=args.volume if args.volume is not None else 100)
+    if not args.disable_audio:
+        audio = Audio(env_raspi=ENV_RASPI, volume=args.volume if args.volume is not None else 100)
 
     # initialize motor module
     motor = Motor(env_raspi=ENV_RASPI)
@@ -56,12 +59,16 @@ def main(arguments):
     leds = Leds(env_raspi=ENV_RASPI)
 
     # set profile array size
-    profile_size = audio.get_buffer_size()
+    if not args.disable_audio:
+        profile_size = audio.get_buffer_size()
+    else:
+        profile_size = 1024
     camera.set_profile_size(profile_size)
-    leds.set_profile_size(profile_size)
+    # leds.set_profile_size(profile_size)
 
     # start audio engine
-    audio.start()
+    if not args.disable_audio:
+        audio.start()
 
     # turn on laser
     laser.on()
@@ -81,7 +88,8 @@ def main(arguments):
 
         # create profile and send to audio engine
         profile = camera.get_profile()
-        audio.set_samples_from_profile(profile)
+        if not args.disable_audio:
+            audio.set_samples_from_profile(profile)
 
         # # move the motor by one step
         # motor.step(100)
