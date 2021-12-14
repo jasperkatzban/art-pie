@@ -60,6 +60,7 @@ class Leds:
         blue_avg = np.average(blue_val)
 
         rgb_array = (red_avg, green_avg, blue_avg) 
+        logger.debug(f'Current pixel RGB values: {rgb_array}')
 
         return rgb_array
 
