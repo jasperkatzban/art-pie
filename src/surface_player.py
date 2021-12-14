@@ -73,7 +73,7 @@ def main(arguments):
     laser.on()
 
     # begin spinning motor
-    # motor.start_spin()
+    motor.start_spin()
 
     # main loop, this iterates continuously forever
     while True:
@@ -92,7 +92,7 @@ def main(arguments):
 
         # # move the motor by one step
         # motor.step(100)
-        motor.start_spin()
+        # motor.start_spin()
 
         # led callback
         leds.update(profile, profile_size)
@@ -114,7 +114,7 @@ def main(arguments):
     motor.stop_spin()
     motor.release()
     laser.off()
-
+    leds.off()
     logger.info('Exiting program!')
 
 if __name__ == '__main__':

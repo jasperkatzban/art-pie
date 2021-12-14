@@ -24,25 +24,30 @@ class Motor:
 
     def start_spin(self):
         """Start spinning (on separate thread)"""
-        # self.thread = threading.Thread(target=self.step_loop)
-        self.thread = threading.Thread(target=self.step)
-        self.thread.start()
-        self.thread.join()
+        self.thread = threading.Thread(target=self.step_loop) # specify which thread to start
+        # self.thread = threading.Thread(target=self.step)
+        self.thread.start() # start it
+        # self.thread.join()
     
     def stop_spin(self):
         """Stop spinning"""
-        self.thread.join()
+        self.thread.join() # join thread with main process and kill it
 
     def step_loop(self, num_steps=1):
+        """Loops continuously and steps motor forward"""
+        # loops forever, this should be ok on a dedicated hardware core but 
+        # ran very slowly on a single core machine, try it!
         while True:
-            pass
+            self.step(num_steps)
+            # could also try only trigger stepping every so often
             # if int(time.time() * 1000) % 1000 == 0:
             #     logger.debug('Triggered motor movement cycle!')
-                # self.step(num_steps)
+            #     self.step(num_steps)
     
     def step(self, num_steps=5, backwards=False):
         """Move the motor a specified number of steps"""
-        # TODO: use smooth steps instead
+        # TODO: use smooth steps instead? But these are stronger,
+        # and stepper.DOUBLE is even stronger but jittery
         if self.env_raspi:
             for _ in range(num_steps):
                 logger.debug('Steping Motor!')
