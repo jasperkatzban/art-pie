@@ -84,3 +84,8 @@ class Leds:
         """Updates pixels based on current generated color values"""
         color = [self.set_hue(profile, profile_size)] * self.numLED
         self.client.put_pixels(color)
+
+    def off(self):
+        """Turns leds to black"""
+        self.client.put_pixels(self.black)
+        self.client.put_pixels(self.black)
