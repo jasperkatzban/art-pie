@@ -87,10 +87,6 @@ For this project, we used a fresh Raspbian Lite install on a [Raspberry Pi 3 Mod
     ```
     These are installed separately to ensure better installation speed. `pip` will try and fail to find pre-compiled wheels that work on Raspbian and will need to build from source, which takes multiple hours for packages as large as OpenCV and Numpy. `apt` is much faster.
 12. Install the Fadecandy pre-compiled binaries according to [these instructions](https://learn.adafruit.com/1500-neopixel-led-curtain-with-raspberry-pi-fadecandy/fadecandy-server-setup). Note: you do not need to create your own configuration json file, as one is included in this project. You will, however, need to swap out the board serial number listed in [`ledconfig.json`](/ledconfig.json) with that of your own if you choose to use this board.
-13. Finally, clone the repository to your Raspberry Pi:
-    ```
-    git clone https://github.com/jasperkatzban/surface-player.git
-    ```
 
 ## Running the Code
 
