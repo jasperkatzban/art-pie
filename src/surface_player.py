@@ -15,7 +15,6 @@ from modules.motor import Motor
 from modules.leds import Leds
 
 def main(arguments):
-
     # parse arguments
     parser = argparse.ArgumentParser(
         description=__doc__,
@@ -42,7 +41,7 @@ def main(arguments):
     logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO)
     logger = logging.getLogger(__name__)
 
-    # intialize camera module, capture and show a single frame
+    # initialize camera module, capture and show a single frame
     camera = Camera(env_raspi=ENV_RASPI, filename=args.image, use_morph=args.use_morph)
    
     # initialize audio module

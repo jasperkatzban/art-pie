@@ -4,7 +4,8 @@ import numpy as np
 import logging
 import sys
 
-from utils.constants import POLYFIT_DEG, THRESHOLD_LOWER, THRESHOLD_UPPER, LINE_RESOLUTION, X_CROP_PX, MIN_CONTOUR_AREA
+from utils.constants import POLYFIT_DEG, THRESHOLD_LOWER, THRESHOLD_UPPER, \
+                            LINE_RESOLUTION, X_CROP_PX, MIN_CONTOUR_AREA
 
 logger = logging.getLogger(__name__)
 

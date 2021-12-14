@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 try:
     from gpiozero import LED
 except:
-    logger.warning('Unable to import gpiozero module! Assuming program is not running on a raspberry pi.')
+    logger.warning('Unable to import gpiozero module! Assuming program is not running on a Raspberry Pi.')
 
 class Laser:
     """Handles turning laser on and off"""

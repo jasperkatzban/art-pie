@@ -10,12 +10,14 @@ class Audio:
     def __init__(self, env_raspi=True, volume=100):
         logger.info('Initializing audio module!')
 
-        # Initialize audio server
+        # Initialize audio server using jack if running onraspberry pi
+        # and coreaudio if on mac
         self.s = Server(duplex=0, audio='jack' if env_raspi else 'coreaudio').boot()
 
         # Set global volume
         self.volume = volume
 
+        # check if server is booted
         if not self.s.getIsBooted():
             logger.error('Could not boot audio server!')
             sys.exit()
@@ -42,8 +44,6 @@ class Audio:
 
     def view_table(self):
         """Opens a window to view the current waveform."""
-        # table = AtanTable(slope=0.5, size=512)
-        # table.view()
         self.t.view()
         print(self.t.getTable())
 
