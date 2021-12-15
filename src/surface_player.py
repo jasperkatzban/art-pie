@@ -98,7 +98,7 @@ def main(arguments):
         # led callback
         led_start = timer()
         led_end = timer()
-        if (led_end - led_start) % 0.2 == 0:
+        if (led_end - led_start) % 2 == 0:
             leds.update(profile, profile_size)
         logger.debug(f'LED timer: {led_end - led_start}')
 
