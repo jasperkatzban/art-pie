@@ -121,7 +121,8 @@ class Camera:
         # if found coordinates, convert to wavetable
         if len(coords) > 0:
             raw_profile = self.scale_coords_to_list(coords, self.profile_size)
-            self.profile = self.scale_profile_sigmoid(raw_profile)
+            convoluted_profile = self.convolute(raw_profile)
+            self.profile = self.scale_profile_sigmoid(convoluted_profile)
             # normalized_profile = self.normalize_profile(raw_profile)
             # self.profile = normalized_profile
         
@@ -236,6 +237,12 @@ class Camera:
         """Scales profile by transfer function"""
         x = profile - self.width_cropped / 2
         return 1 / (1 + np.exp(-(10 * x) / SIGMOID_N))
+
+    def convolute(self, profile):
+        """Convolutes profile with two smaller versions of itself"""
+        a = profile[::2]
+        b = profile[1::2]
+        return profile * np.concatenate((a,b))
 
     def show_image(self, image):
         """Shows an image"""
