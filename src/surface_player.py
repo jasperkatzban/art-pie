@@ -96,8 +96,8 @@ def main(arguments):
         # motor.start_spin()
 
         # led callback
-        led_start = timer()
-        led_end = timer()
+        led_start = timer() * 10000000
+        led_end = timer() * 10000000
         if (led_end - led_start) % 2 == 0:
             leds.update(profile, profile_size)
         logger.debug(f'LED timer: {led_end - led_start}')
