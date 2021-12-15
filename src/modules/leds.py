@@ -54,9 +54,9 @@ class Leds:
         green_val = profile[trip+1:trip*2+1]
         blue_val = profile[trip*2+1:]
         
-        red_avg = np.average(red_val)
-        green_avg = np.average(green_val)
-        blue_avg = np.average(blue_val)
+        red_avg = int(np.average(red_val) * 255)
+        green_avg = int(np.average(green_val) * 255)
+        blue_avg = int(np.average(blue_val) * 255)
 
         rgb_array = (red_avg, green_avg, blue_avg) 
         logger.debug(f'Current pixel RGB values: {rgb_array}')
