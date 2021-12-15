@@ -99,6 +99,7 @@ def main(arguments):
         current = timer()
         if (current) % 0.2 == 0:
             leds.update(profile, profile_size)
+        logger.debug(f'LED timer: {current}')
 
         # draw coords on frame
         if args.preview:
