@@ -51,7 +51,7 @@ class Motor:
                     self.kit.stepper1.onestep(direction=stepper.BACKWARD, style=stepper.INTERLEAVE)
                 else:
                     self.kit.stepper1.onestep(direction=stepper.FORWARD, style=stepper.INTERLEAVE)
-                time.sleep(MOTOR_STEP_DELAY_MS * 1000)
+                time.sleep(MOTOR_STEP_DELAY_MS / 1000)
 
     def step(self, backwards=False):
         """Move the motor a specified number of steps"""
@@ -61,7 +61,7 @@ class Motor:
                 self.kit.stepper1.onestep(direction=stepper.BACKWARD, style=stepper.INTERLEAVE)
             else:
                 self.kit.stepper1.onestep(direction=stepper.FORWARD, style=stepper.INTERLEAVE)
-            time.sleep(MOTOR_STEP_DELAY_MS * 1000)
+            time.sleep(MOTOR_STEP_DELAY_MS / 1000)
         
     def full_turn(self, backwards=False):
         """Moves the motor one revolution. Set `backwards` flag to change direction"""
