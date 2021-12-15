@@ -2,7 +2,7 @@ import threading
 import logging
 import time
 
-from utils.constants import MOTOR_NUM_STEPS_REVOLUTION, MOTOR_NUM_STEPS_PER_LOOP
+from utils.constants import MOTOR_NUM_STEPS_REVOLUTION, MOTOR_STEP_DELAY_MS
 
 logger = logging.getLogger(__name__)
 
@@ -35,26 +35,33 @@ class Motor:
 
     def step_loop(self):
         """Loops continuously and steps motor forward"""
-        # loops forever, this should be ok on a dedicated hardware core but 
-        # ran very slowly on a single core machine, try it!
         while True:
-            self.step(MOTOR_NUM_STEPS_PER_LOOP)
+            self.step()
             # could also try only trigger stepping every so often
             # if int(time.time() * 1000) % 1000 == 0:
             #     logger.debug('Triggered motor movement cycle!')
             #     self.step(num_steps)
     
-    def step(self, num_steps=5, backwards=False):
+    def step_num(self, num_steps=5, backwards=False):
         """Move the motor a specified number of steps"""
-        # TODO: use smooth steps instead? But these are stronger,
-        # and stepper.DOUBLE is even stronger but jittery
         if self.env_raspi:
             for _ in range(num_steps):
                 logger.debug('Steping Motor!')
                 if backwards:
-                    self.kit.stepper1.onestep(direction=stepper.BACKWARD, style=stepper.SINGLE)
+                    self.kit.stepper1.onestep(direction=stepper.BACKWARD, style=stepper.INTERLEAVE)
                 else:
-                    self.kit.stepper1.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
+                    self.kit.stepper1.onestep(direction=stepper.FORWARD, style=stepper.INTERLEAVE)
+                time.sleep(MOTOR_STEP_DELAY_MS * 1000)
+
+    def step(self, backwards=False):
+        """Move the motor a specified number of steps"""
+        logger.debug('Steping Motor!')
+        if self.env_raspi:
+            if backwards:
+                self.kit.stepper1.onestep(direction=stepper.BACKWARD, style=stepper.INTERLEAVE)
+            else:
+                self.kit.stepper1.onestep(direction=stepper.FORWARD, style=stepper.INTERLEAVE)
+            time.sleep(MOTOR_STEP_DELAY_MS * 1000)
         
     def full_turn(self, backwards=False):
         """Moves the motor one revolution. Set `backwards` flag to change direction"""
