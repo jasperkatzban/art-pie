@@ -1,5 +1,6 @@
 # motor config
-MOTOR_NUM_STEPS_REVOLUTION = 200
+MOTOR_NUM_STEPS_REVOLUTION = 200 # this changes depending on which step type is used
+MOTOR_NUM_STEPS_PER_LOOP = 1
 
 # laser pin definition
 GPIO_LASER = 14 # pin 8 (GPIO14) on raspberry pi 2B V1.1

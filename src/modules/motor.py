@@ -2,7 +2,7 @@ import threading
 import logging
 import time
 
-from utils.constants import MOTOR_NUM_STEPS_REVOLUTION
+from utils.constants import MOTOR_NUM_STEPS_REVOLUTION, MOTOR_NUM_STEPS_PER_LOOP
 
 logger = logging.getLogger(__name__)
 
@@ -33,12 +33,12 @@ class Motor:
         """Stop spinning"""
         self.thread.join() # join thread with main process and kill it
 
-    def step_loop(self, num_steps=1):
+    def step_loop(self):
         """Loops continuously and steps motor forward"""
         # loops forever, this should be ok on a dedicated hardware core but 
         # ran very slowly on a single core machine, try it!
         while True:
-            self.step(num_steps)
+            self.step(MOTOR_NUM_STEPS_PER_LOOP)
             # could also try only trigger stepping every so often
             # if int(time.time() * 1000) % 1000 == 0:
             #     logger.debug('Triggered motor movement cycle!')
