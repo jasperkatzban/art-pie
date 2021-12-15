@@ -28,7 +28,7 @@ class Audio:
         # Create a table of length `buffer size` and read it in loop.
         self.t = DataTable(size=self.bs)
         self.osc = TableRead(self.t, freq=self.t.getRate(), loop=True, mul=.05).out()
-        self.chorus = Chorus(self.osc, depth=[1.2,2.6], feedback=0.8, bal=.5).out()
+        self.chorus = Chorus(self.osc, depth=[1.2,2.6], feedback=0.8, bal=.3).out()
         self.delay = Delay(self.chorus, delay=[.15,.2], feedback=.5, mul=.8).out()
         # self.reverb = Freeverb(self.osc, size=[1,1], damp=0, bal=1).out()
 
