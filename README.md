@@ -79,7 +79,7 @@ For this project, we used a fresh Raspbian Lite install on a [Raspberry Pi 3 Mod
     ```
 10. Install the Python packages from the `requirements_raspi.txt` file.
     ```
-    python3 -m pip install -r requirements_raspi.txt
+    python3 -m pip install -r ../surface-player/requirements_raspi.txt
     ```
 11. Install OpenCV and Numpy using `apt`.
     ```
