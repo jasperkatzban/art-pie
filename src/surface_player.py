@@ -96,11 +96,7 @@ def main(arguments):
         # motor.start_spin()
 
         # led callback
-        if counter != 500:
-            leds.update(profile, profile_size)
-            counter = 0
-        else:
-            counter += 1
+        leds.update(profile, profile_size)
 
         # draw coords on frame
         if args.preview:
