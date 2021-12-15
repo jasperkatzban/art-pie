@@ -11,14 +11,15 @@ min_hue, max_hue = 130, 180
 min_sat, max_sat = 50, 255
 min_val, max_val = 100, 255
 
-from numpy import array
+# construct arrays of min and max values
+from numpy import array 
 THRESHOLD_LOWER = array([min_hue, min_sat, min_val])
 THRESHOLD_UPPER = array([max_hue, max_sat, max_val])
 
-POLYFIT_DEG = 5
-LINE_RESOLUTION = 5
-X_CROP_PX = 150
-MIN_CONTOUR_AREA = 0
+POLYFIT_DEG = 5 # degree to fit polynomial to
+LINE_RESOLUTION = 5 # polynomial line granularity
+X_CROP_PX = 150 # crop pixels off of left and right of frame
+MIN_CONTOUR_AREA = 0 # minimum area for valid detected contours in mask
 
 # led control
 LED_HUE_THRESHOLD_LOWER = 0.3
