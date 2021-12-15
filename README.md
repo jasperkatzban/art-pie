@@ -169,7 +169,11 @@ The `Motor` module handles control of the stepper motor. The motor begins rotati
 ### Leds
 The `Leds` module handles control of the addressable LEDs mounted throughout the physical enclosure. 
 
-- `method()` - brief description as it pertains to the rest of the software subsystem
+- `set_hue()` - splits the audio `profile` object into three sections and assigns the sections to rgb values 
+
+- `update()` - updates the rgb values of the LEDs 
+
+- `off()` - turns the LEDs off by setting their rgb values to black 
 
 Finally, various constants and macros are listed in [`src/utils/constants.py`](src/utils/constants.py).
 
