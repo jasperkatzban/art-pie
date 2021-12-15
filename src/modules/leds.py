@@ -1,7 +1,7 @@
 from utils.opc import Client
 import logging
 import numpy as np 
-from utils.constants import LED_HUE_THRESHOLD_LOWER, LED_HUE_THRESHOLD_UPPER
+from utils.constants import LED_HUE_THRESHOLD_LOWER, LED_HUE_THRESHOLD_UPPER, NUM_LEDS
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +12,7 @@ class Leds:
     """
 
     def __init__(self, env_raspi=True):
-        self.numLED = 33
+        self.num_leds = NUM_LEDS
 
         try:
             self.client = Client('localhost:7890')
@@ -21,12 +21,12 @@ class Leds:
             logger.warn(e)
 
         # colors
-        self.black = [ (0,0,0) ] * self.numLED
-        self.white = [ (0,0,255) ] * self.numLED
-        self.purple = [ (102, 0, 204) ] * self.numLED
-        self.pink = [ (255, 0, 255) ] * self.numLED
-        self.blue = [ (51, 255, 255) ] * self.numLED
-        self.green = [ (0, 255, 0) ] * self.numLED
+        self.black = [ (0,0,0) ] * self.num_leds
+        self.white = [ (0,0,255) ] * self.num_leds
+        self.purple = [ (102, 0, 204) ] * self.num_leds
+        self.pink = [ (255, 0, 255) ] * self.num_leds
+        self.blue = [ (51, 255, 255) ] * self.num_leds
+        self.green = [ (0, 255, 0) ] * self.num_leds
 
         self.top_thresh = LED_HUE_THRESHOLD_UPPER    
         self.bot_thresh = LED_HUE_THRESHOLD_LOWER
@@ -82,7 +82,7 @@ class Leds:
 
     def update(self, profile, profile_size):
         """Updates pixels based on current generated color values"""
-        color = [self.set_hue(profile, profile_size)] * self.numLED
+        color = [self.set_hue(profile, profile_size)] * self.num_leds
         self.client.put_pixels(color)
 
     def off(self):

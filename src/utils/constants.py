@@ -23,5 +23,6 @@ X_CROP_PX = 150 # crop pixels off of left and right of frame
 MIN_CONTOUR_AREA = 0 # minimum area for valid detected contours in mask
 
 # led control
+NUM_LEDS = 33
 LED_HUE_THRESHOLD_LOWER = 0.3
 LED_HUE_THRESHOLD_UPPER = 0.7
