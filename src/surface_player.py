@@ -76,6 +76,7 @@ def main(arguments):
     motor.start_spin()
 
     # main loop, this iterates continuously forever
+    counter = 0
     while True:
         # timing the main loop for debugging purposes
         if args.verbose:
@@ -95,7 +96,11 @@ def main(arguments):
         # motor.start_spin()
 
         # led callback
-        leds.update(profile, profile_size)
+        if counter != 5:
+            leds.update(profile, profile_size)
+            counter = 0
+        else:
+            counter += 1
 
         # draw coords on frame
         if args.preview:
