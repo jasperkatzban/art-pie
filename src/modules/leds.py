@@ -55,7 +55,7 @@ class Leds:
         blue_val = profile[trip*2+1:]
         
         red_avg = int(np.average(red_val) * 255)
-        green_avg = int(np.average(green_val) * 255)
+        green_avg = int(np.average(green_val))
         blue_avg = int(np.average(blue_val) * 255)
 
         rgb_array = (red_avg, green_avg, blue_avg) 
