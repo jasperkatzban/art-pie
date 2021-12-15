@@ -96,10 +96,11 @@ def main(arguments):
         # motor.start_spin()
 
         # led callback
-        current = timer()
-        if (current) % 0.2 == 0:
+        led_start = timer()
+        led_end = timer()
+        if (led_end - led_start) % 0.2 == 0:
             leds.update(profile, profile_size)
-        logger.debug(f'LED timer: {current}')
+        logger.debug(f'LED timer: {led_end - led_start}')
 
         # draw coords on frame
         if args.preview:
