@@ -97,7 +97,7 @@ def main(arguments):
 
         # led callback
         end = timer()
-        if (end - start) %2 == 0:
+        if (end - start) % 0.2 == 0:
             leds.update(profile, profile_size)
 
         # draw coords on frame
