@@ -96,7 +96,7 @@ def main(arguments):
         # motor.start_spin()
 
         # led callback
-        if counter != 5:
+        if counter != 30:
             leds.update(profile, profile_size)
             counter = 0
         else:
