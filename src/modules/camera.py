@@ -5,7 +5,8 @@ import logging
 import sys
 
 from utils.constants import POLYFIT_DEG, THRESHOLD_LOWER, THRESHOLD_UPPER, \
-                            LINE_RESOLUTION, X_CROP_PX, MIN_CONTOUR_AREA
+                            LINE_RESOLUTION, X_CROP_PX, MIN_CONTOUR_AREA, \
+                            SIGMOID_N
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +33,7 @@ class Camera:
 
             # derive camera frame dimensions
             self.width = self.cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+            self.width_cropped = self.width - 2 * X_CROP_PX
             self.height = self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 
             # frame buffers
@@ -118,11 +120,10 @@ class Camera:
 
         # if found coordinates, convert to wavetable
         if len(coords) > 0:
-            # self.draw_coords(coords, (255, 0, 0))
             raw_profile = self.scale_coords_to_list(coords, self.profile_size)
-            normalized_profile = self.normalize_profile(raw_profile)
-            self.profile = normalized_profile
-            # self.profile = raw_profile
+            self.profile = self.scale_profile_sigmoid(raw_profile)
+            # normalized_profile = self.normalize_profile(raw_profile)
+            # self.profile = normalized_profile
         
         # otherwise return silence
         else:
@@ -230,6 +231,11 @@ class Camera:
         """Scales profile values from 0 to 1"""
         range = np.max(profile) - np.min(profile)
         return (profile - np.min(profile)) / max(range, 1)
+
+    def scale_profile_sigmoid(self, profile):
+        """Scales profile by transfer function"""
+        x = profile - self.width_cropped / 2
+        return 1 / (1 + np.exp(-(10 * x) / SIGMOID_N))
 
     def show_image(self, image):
         """Shows an image"""

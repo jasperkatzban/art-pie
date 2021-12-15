@@ -19,6 +19,7 @@ THRESHOLD_UPPER = array([max_hue, max_sat, max_val])
 
 POLYFIT_DEG = 5 # degree to fit polynomial to
 LINE_RESOLUTION = 5 # polynomial line granularity
+SIGMOID_N = 200
 X_CROP_PX = 150 # crop pixels off of left and right of frame
 MIN_CONTOUR_AREA = 0 # minimum area for valid detected contours in mask
 
