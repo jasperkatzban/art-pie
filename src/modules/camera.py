@@ -121,8 +121,8 @@ class Camera:
         # if found coordinates, convert to wavetable
         if len(coords) > 0:
             raw_profile = self.scale_coords_to_list(coords, self.profile_size)
-            convoluted_profile = self.convolute(raw_profile)
-            self.profile = self.scale_profile_sigmoid(convoluted_profile)
+            sigmoid_profile = self.scale_profile_sigmoid(raw_profile)
+            self.profile = self.convolute(sigmoid_profile)
             # normalized_profile = self.normalize_profile(raw_profile)
             # self.profile = normalized_profile
         
