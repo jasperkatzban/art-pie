@@ -96,8 +96,8 @@ def main(arguments):
         # motor.start_spin()
 
         # led callback
-        end = timer()
-        if (end - start) % 0.2 == 0:
+        current = timer()
+        if (current) % 0.2 == 0:
             leds.update(profile, profile_size)
 
         # draw coords on frame
