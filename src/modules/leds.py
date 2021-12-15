@@ -44,28 +44,25 @@ class Leds:
             rgb_array: a 9 digit rgb list in an array.
         """
         
-        if int(profile_size) >= 5120:
-            profile_remain = profile_size % 3
-            if profile_remain != 0:
-                new_profile_length = profile_size - profile_remain
-                profile = profile[0:new_profile_length]
+        profile_remain = profile_size % 3
+        if profile_remain != 0:
+            new_profile_length = profile_size - profile_remain
+            profile = profile[0:new_profile_length]
                 
-            trip = int(len(profile) / 3)
+        trip = int(len(profile) / 3)
                 
-            red_val = profile[0:trip+1]
-            green_val = profile[trip+1:trip*2+1]
-            blue_val = profile[trip*2+1:]
+        red_val = profile[0:trip+1]
+        green_val = profile[trip+1:trip*2+1]
+        blue_val = profile[trip*2+1:]
                 
-            red_avg = int(np.average(red_val) * 255)
-            green_avg = int(np.average(green_val))
-            blue_avg = int(np.average(blue_val) * 255)
+        red_avg = int(np.average(red_val) * 255)
+        green_avg = int(np.average(green_val))
+        blue_avg = int(np.average(blue_val) * 255)
 
-            rgb_array = (red_avg, green_avg, blue_avg) 
-            logger.debug(f'Current pixel RGB values: {rgb_array}')
+        rgb_array = (red_avg, green_avg, blue_avg) 
+        logger.debug(f'Current pixel RGB values: {rgb_array}')
 
-            return rgb_array
-        else:
-            return 0
+        return rgb_array
 
     # def set_hue_avg(self, profile_avg):
     #     if profile_avg <= self.bot_thresh:
@@ -86,11 +83,8 @@ class Leds:
 
     def update(self, profile, profile_size):
         """Updates pixels based on current generated color values"""
-        if self.set_hue(profile, profile_size) == 0:
-            pass
-        else:
-            color = [self.set_hue(profile, profile_size)] * self.num_leds
-            self.client.put_pixels(color)
+        color = [self.set_hue(profile, profile_size)] * self.num_leds
+        self.client.put_pixels(color)
 
     def off(self):
         """Turns leds to black"""
